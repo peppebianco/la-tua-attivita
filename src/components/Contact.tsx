@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Confetti from "./Confetti";
 import { CheckIcon, MailIcon, MapPinIcon, PhoneIcon } from "./icons";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
 
   return (
     <section id="contatti" className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+      {celebrate && <Confetti onDone={() => setCelebrate(false)} />}
       <div className="grid gap-14 lg:grid-cols-[1fr_1.2fr]">
         <div>
           <span className="text-sm font-semibold uppercase tracking-wide text-brand-green-600">
@@ -71,6 +74,7 @@ export default function Contact() {
               onSubmit={(e) => {
                 e.preventDefault();
                 setSubmitted(true);
+                setCelebrate(true);
               }}
               className="grid gap-5 sm:grid-cols-2"
             >

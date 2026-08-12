@@ -1,5 +1,9 @@
+"use client";
+
+import { useRef, useState } from "react";
 import { BoltIcon, CheckIcon, FlameIcon, SunIcon } from "./icons";
 import Reveal from "./Reveal";
+import TypewriterWord from "./TypewriterWord";
 
 const TRUST_POINTS = [
   "Consulenza gratuita e senza impegno",
@@ -7,16 +11,44 @@ const TRUST_POINTS = [
   "Nessun costo nascosto",
 ];
 
+const ROTATING_WORDS = ["luce e gas", "fotovoltaico", "bollette alte", "energia sprecata"];
+
 export default function Hero() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x, y });
+  }
+
+  function handleMouseLeave() {
+    setTilt({ x: 0, y: 0 });
+  }
+
   return (
-    <section id="top" className="relative overflow-hidden bg-brand-navy-900">
+    <section
+      id="top"
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative overflow-hidden bg-brand-navy-900"
+    >
       <div
-        className="animate-blob pointer-events-none absolute inset-0 opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 20%, #16a34a 0%, transparent 45%), radial-gradient(circle at 80% 0%, #f59e0b 0%, transparent 40%)",
-        }}
-      />
+        className="pointer-events-none absolute inset-0 transition-transform duration-300 ease-out"
+        style={{ transform: `translate3d(${tilt.x * 24}px, ${tilt.y * 24}px, 0)` }}
+      >
+        <div
+          className="animate-blob absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 20%, #16a34a 0%, transparent 45%), radial-gradient(circle at 80% 0%, #f59e0b 0%, transparent 40%)",
+          }}
+        />
+      </div>
 
       <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-28">
         <Reveal>
@@ -28,8 +60,10 @@ export default function Hero() {
             Energia più semplice, da oggi
           </span>
           <h1 className="mt-6 text-4xl font-bold leading-tight text-white sm:text-5xl">
-            Risparmia su luce e gas con{" "}
-            <span className="text-brand-green-500">La Tua Attività</span>
+            Risparmia su{" "}
+            <TypewriterWord words={ROTATING_WORDS} className="text-brand-green-500" />
+            <br />
+            con La Tua Attività
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-300">
             Analizziamo la tua bolletta e ti proponiamo la soluzione più
@@ -45,10 +79,10 @@ export default function Hero() {
               Richiedi una consulenza gratuita
             </a>
             <a
-              href="#servizi"
+              href="#calcolatore"
               className="rounded-full border border-white/20 px-7 py-3.5 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10"
             >
-              Scopri i servizi
+              Calcola il tuo risparmio
             </a>
           </div>
 
@@ -63,46 +97,54 @@ export default function Hero() {
         </Reveal>
 
         <Reveal delay={150} className="relative">
-          <div className="animate-float-soft rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur">
-            <p className="text-sm font-semibold text-slate-400">
-              Risparmio stimato annuo
-            </p>
-            <p className="mt-2 text-4xl font-bold text-white">
-              fino al 30%
-              <span className="ml-2 text-base font-medium text-slate-400">
-                sulla bolletta
+          <div
+            className="transition-transform duration-300 ease-out"
+            style={{ transform: `translate3d(${tilt.x * -14}px, ${tilt.y * -14}px, 0)` }}
+          >
+            <div className="animate-float-soft rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur">
+              <p className="text-sm font-semibold text-slate-400">
+                Risparmio stimato annuo
+              </p>
+              <p className="mt-2 text-4xl font-bold text-white">
+                fino al 30%
+                <span className="ml-2 text-base font-medium text-slate-400">
+                  sulla bolletta
+                </span>
+              </p>
+
+              <div className="mt-8 grid grid-cols-3 gap-4">
+                <div className="animate-float rounded-2xl bg-white/5 p-4 text-center" style={{ animationDelay: "0s" }}>
+                  <BoltIcon className="mx-auto h-6 w-6 text-brand-green-500" />
+                  <p className="mt-3 text-xs font-semibold text-slate-300">Luce</p>
+                </div>
+                <div className="animate-float rounded-2xl bg-white/5 p-4 text-center" style={{ animationDelay: "0.6s" }}>
+                  <FlameIcon className="mx-auto h-6 w-6 text-brand-amber-400" />
+                  <p className="mt-3 text-xs font-semibold text-slate-300">Gas</p>
+                </div>
+                <div className="animate-float rounded-2xl bg-white/5 p-4 text-center" style={{ animationDelay: "1.2s" }}>
+                  <SunIcon className="mx-auto h-6 w-6 text-brand-amber-400" />
+                  <p className="mt-3 text-xs font-semibold text-slate-300">
+                    Fotovoltaico
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href="#calcolatore"
+                className="mt-8 flex items-center justify-between rounded-2xl bg-brand-green-600/15 px-4 py-3 text-sm text-brand-green-500 transition hover:bg-brand-green-600/25"
+              >
+                <span className="font-semibold">Preventivo in 2 minuti</span>
+                <span>→</span>
+              </a>
+            </div>
+
+            <div className="animate-float-soft absolute -left-6 -top-6 hidden items-center gap-2 rounded-2xl border border-white/10 bg-brand-navy-800/90 px-4 py-3 text-xs font-semibold text-white shadow-xl backdrop-blur sm:flex">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green-500 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-green-500" />
               </span>
-            </p>
-
-            <div className="mt-8 grid grid-cols-3 gap-4">
-              <div className="animate-float rounded-2xl bg-white/5 p-4 text-center" style={{ animationDelay: "0s" }}>
-                <BoltIcon className="mx-auto h-6 w-6 text-brand-green-500" />
-                <p className="mt-3 text-xs font-semibold text-slate-300">Luce</p>
-              </div>
-              <div className="animate-float rounded-2xl bg-white/5 p-4 text-center" style={{ animationDelay: "0.6s" }}>
-                <FlameIcon className="mx-auto h-6 w-6 text-brand-amber-400" />
-                <p className="mt-3 text-xs font-semibold text-slate-300">Gas</p>
-              </div>
-              <div className="animate-float rounded-2xl bg-white/5 p-4 text-center" style={{ animationDelay: "1.2s" }}>
-                <SunIcon className="mx-auto h-6 w-6 text-brand-amber-400" />
-                <p className="mt-3 text-xs font-semibold text-slate-300">
-                  Fotovoltaico
-                </p>
-              </div>
+              Preventivo richiesto 2 min fa
             </div>
-
-            <div className="mt-8 flex items-center justify-between rounded-2xl bg-brand-green-600/15 px-4 py-3 text-sm text-brand-green-500">
-              <span className="font-semibold">Preventivo in 2 minuti</span>
-              <span className="transition group-hover:translate-x-1">→</span>
-            </div>
-          </div>
-
-          <div className="animate-float-soft absolute -left-6 -top-6 hidden items-center gap-2 rounded-2xl border border-white/10 bg-brand-navy-800/90 px-4 py-3 text-xs font-semibold text-white shadow-xl backdrop-blur sm:flex">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green-500 opacity-75" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-green-500" />
-            </span>
-            Preventivo richiesto 2 min fa
           </div>
         </Reveal>
       </div>

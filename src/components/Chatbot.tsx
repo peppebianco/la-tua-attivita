@@ -98,19 +98,30 @@ const TREE: Record<NodeId, ChatNode> = {
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(TREE.root.bot.map((text) => ({ from: "bot", text })));
-  const [options, setOptions] = useState<ChatOption[]>(TREE.root.options);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [options, setOptions] = useState<ChatOption[]>([]);
+  const [isTyping, setIsTyping] = useState(true);
   const [hasUnread, setHasUnread] = useState(true);
   const [showTeaser, setShowTeaser] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, open]);
+  }, [messages, options, isTyping, open]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setShowTeaser(true), 4000);
-    return () => window.clearTimeout(timer);
+    const teaserTimer = window.setTimeout(() => setShowTeaser(true), 4000);
+
+    const greetTimer = window.setTimeout(() => {
+      setIsTyping(false);
+      setMessages(TREE.root.bot.map((text) => ({ from: "bot", text })));
+      setOptions(TREE.root.options);
+    }, 900);
+
+    return () => {
+      window.clearTimeout(teaserTimer);
+      window.clearTimeout(greetTimer);
+    };
   }, []);
 
   function openChat() {
@@ -121,18 +132,21 @@ export default function Chatbot() {
 
   function handleOption(option: ChatOption) {
     const node = TREE[option.next];
-    setMessages((prev) => [
-      ...prev,
-      { from: "user", text: option.label },
-      ...node.bot.map((text) => ({ from: "bot" as const, text })),
-    ]);
-    setOptions(node.options);
+    setMessages((prev) => [...prev, { from: "user", text: option.label }]);
+    setOptions([]);
+    setIsTyping(true);
 
-    if (option.next === "cta_contatti") {
-      window.setTimeout(() => {
-        document.getElementById("contatti")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 300);
-    }
+    window.setTimeout(() => {
+      setIsTyping(false);
+      setMessages((prev) => [...prev, ...node.bot.map((text) => ({ from: "bot" as const, text }))]);
+      setOptions(node.options);
+
+      if (option.next === "cta_contatti") {
+        window.setTimeout(() => {
+          document.getElementById("contatti")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 300);
+      }
+    }, 650);
   }
 
   return (
@@ -163,7 +177,7 @@ export default function Chatbot() {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${message.from === "user" ? "justify-end" : "justify-start"}`}
+                className={`animate-pop-in flex ${message.from === "user" ? "justify-end" : "justify-start"}`}
               >
                 <p
                   className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
@@ -176,6 +190,16 @@ export default function Chatbot() {
                 </p>
               </div>
             ))}
+
+            {isTyping && (
+              <div className="animate-pop-in flex justify-start">
+                <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm border border-slate-100 bg-white px-4 py-3">
+                  <span className="typing-dot h-1.5 w-1.5 rounded-full bg-slate-400" style={{ animationDelay: "0s" }} />
+                  <span className="typing-dot h-1.5 w-1.5 rounded-full bg-slate-400" style={{ animationDelay: "0.15s" }} />
+                  <span className="typing-dot h-1.5 w-1.5 rounded-full bg-slate-400" style={{ animationDelay: "0.3s" }} />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="border-t border-slate-100 bg-white p-3">
@@ -188,7 +212,7 @@ export default function Chatbot() {
                   key={option.label}
                   type="button"
                   onClick={() => handleOption(option)}
-                  className="rounded-full border border-brand-green-600 px-3.5 py-2 text-xs font-semibold text-brand-green-700 transition hover:bg-brand-green-50"
+                  className="animate-pop-in rounded-full border border-brand-green-600 px-3.5 py-2 text-xs font-semibold text-brand-green-700 transition hover:-translate-y-0.5 hover:bg-brand-green-50"
                 >
                   {option.label}
                 </button>

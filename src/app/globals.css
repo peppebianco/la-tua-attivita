@@ -235,6 +235,63 @@ html {
   transform: translateY(0);
 }
 
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 0.9em;
+  margin-left: 3px;
+  background: currentColor;
+  vertical-align: -0.1em;
+  animation: blink 0.9s steps(1) infinite;
+}
+
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.typing-dot {
+  animation: typing-dot 1.1s ease-in-out infinite;
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.4s ease-out both;
+}
+
+@keyframes accordion-arrow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(45deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-float,
   .animate-float-soft,
@@ -245,7 +302,10 @@ html {
   .animate-sweep,
   .animate-glow-pulse,
   .pulse-ring,
-  .marquee-track {
+  .marquee-track,
+  .typewriter-cursor,
+  .typing-dot,
+  .animate-slide-in-left {
     animation: none !important;
   }
 

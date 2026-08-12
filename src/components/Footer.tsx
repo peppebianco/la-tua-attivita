@@ -35,8 +35,10 @@ export default function Footer() {
           </h3>
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
             <li><a href="#vantaggi" className="hover:text-brand-amber-400">Perché sceglierci</a></li>
+            <li><a href="#calcolatore" className="hover:text-brand-amber-400">Calcolatore di risparmio</a></li>
             <li><a href="#come-funziona" className="hover:text-brand-amber-400">Come funziona</a></li>
             <li><a href="#recensioni" className="hover:text-brand-amber-400">Recensioni</a></li>
+            <li><a href="#faq" className="hover:text-brand-amber-400">Domande frequenti</a></li>
             <li><a href="#contatti" className="hover:text-brand-amber-400">Contatti</a></li>
           </ul>
         </div>

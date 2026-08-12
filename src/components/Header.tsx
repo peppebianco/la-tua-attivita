@@ -5,7 +5,7 @@ import { BoltIcon, MenuIcon, PhoneIcon, XIcon } from "./icons";
 
 const NAV_LINKS = [
   { href: "#servizi", label: "Servizi" },
-  { href: "#vantaggi", label: "Perché sceglierci" },
+  { href: "#calcolatore", label: "Calcolatore" },
   { href: "#come-funziona", label: "Come funziona" },
   { href: "#recensioni", label: "Recensioni" },
   { href: "#contatti", label: "Contatti" },
