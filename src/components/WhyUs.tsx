@@ -1,4 +1,6 @@
 import { ClockIcon, PiggyBankIcon, ShieldIcon, SunIcon } from "./icons";
+import Reveal from "./Reveal";
+import StatCounter from "./StatCounter";
 
 const REASONS = [
   {
@@ -32,7 +34,7 @@ export default function WhyUs() {
     <section id="vantaggi" className="bg-brand-green-50/60">
       <div className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
         <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
+          <Reveal>
             <span className="text-sm font-semibold uppercase tracking-wide text-brand-green-600">
               Perché sceglierci
             </span>
@@ -46,41 +48,28 @@ export default function WhyUs() {
             </p>
 
             <div className="mt-8 grid grid-cols-2 gap-6">
-              <div>
-                <p className="text-3xl font-bold text-brand-navy-900">10+</p>
-                <p className="mt-1 text-sm text-slate-600">Anni di esperienza</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-brand-navy-900">30%</p>
-                <p className="mt-1 text-sm text-slate-600">Risparmio medio stimato</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-brand-navy-900">48h</p>
-                <p className="mt-1 text-sm text-slate-600">Tempo medio di attivazione</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-brand-navy-900">100%</p>
-                <p className="mt-1 text-sm text-slate-600">Consulenza gratuita</p>
-              </div>
+              <StatCounter target={10} suffix="+" label="Anni di esperienza" />
+              <StatCounter target={30} suffix="%" label="Risparmio medio stimato" />
+              <StatCounter target={48} suffix="h" label="Tempo medio di attivazione" />
+              <StatCounter target={100} suffix="%" label="Consulenza gratuita" />
             </div>
-          </div>
+          </Reveal>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            {REASONS.map((reason) => (
-              <div
-                key={reason.title}
-                className="rounded-2xl bg-white p-6 shadow-sm"
-              >
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-green-600 text-white">
-                  <reason.icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-4 text-base font-semibold text-brand-navy-900">
-                  {reason.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                  {reason.description}
-                </p>
-              </div>
+            {REASONS.map((reason, index) => (
+              <Reveal key={reason.title} delay={index * 100}>
+                <div className="group rounded-2xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                  <span className="animate-float-soft flex h-11 w-11 items-center justify-center rounded-xl bg-brand-green-600 text-white transition-transform group-hover:scale-110" style={{ animationDelay: `${index * 0.3}s` }}>
+                    <reason.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 text-base font-semibold text-brand-navy-900">
+                    {reason.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                    {reason.description}
+                  </p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

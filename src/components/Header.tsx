@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BoltIcon, MenuIcon, PhoneIcon, XIcon } from "./icons";
 
 const NAV_LINKS = [
@@ -13,12 +13,28 @@ const NAV_LINKS = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-        <a href="#top" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-green-600 text-white">
+    <header
+      className={`sticky top-0 z-40 border-b bg-white/90 backdrop-blur transition-shadow duration-300 ${
+        scrolled ? "border-slate-100 shadow-sm" : "border-transparent"
+      }`}
+    >
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between px-5 lg:px-8 transition-[padding] duration-300 ${
+          scrolled ? "py-3" : "py-4"
+        }`}
+      >
+        <a href="#top" className="group flex items-center gap-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-green-600 text-white transition-transform duration-300 group-hover:rotate-12">
             <BoltIcon className="h-5 w-5" />
           </span>
           <span className="text-lg font-bold tracking-tight text-brand-navy-900">
@@ -48,7 +64,7 @@ export default function Header() {
           </a>
           <a
             href="#contatti"
-            className="rounded-full bg-brand-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-green-600/30 transition hover:bg-brand-green-700"
+            className="rounded-full bg-brand-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-green-600/30 transition hover:-translate-y-0.5 hover:bg-brand-green-700"
           >
             Preventivo gratuito
           </a>

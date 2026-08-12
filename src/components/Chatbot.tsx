@@ -100,11 +100,24 @@ export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(TREE.root.bot.map((text) => ({ from: "bot", text })));
   const [options, setOptions] = useState<ChatOption[]>(TREE.root.options);
+  const [hasUnread, setHasUnread] = useState(true);
+  const [showTeaser, setShowTeaser] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, open]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowTeaser(true), 4000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  function openChat() {
+    setOpen(true);
+    setHasUnread(false);
+    setShowTeaser(false);
+  }
 
   function handleOption(option: ChatOption) {
     const node = TREE[option.next];
@@ -185,14 +198,50 @@ export default function Chatbot() {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Chiudi assistente virtuale" : "Apri assistente virtuale"}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-green-600 text-white shadow-xl shadow-brand-green-600/30 transition hover:bg-brand-green-700"
-      >
-        {open ? <XIcon className="h-6 w-6" /> : <MessageIcon className="h-6 w-6" />}
-      </button>
+      {!open && showTeaser && (
+        <div className="animate-pop-in flex max-w-[220px] items-start gap-2 rounded-2xl rounded-br-sm border border-slate-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-xl">
+          <span className="flex-1">
+            👋 Hai bisogno di aiuto? Chatta con noi, è gratis!
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowTeaser(false)}
+            aria-label="Chiudi suggerimento"
+            className="shrink-0 text-slate-400 transition hover:text-slate-600"
+          >
+            <XIcon className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      <div className="relative">
+        {!open && (
+          <>
+            <span className="pulse-ring absolute inset-0 rounded-full bg-brand-green-500" />
+            <span
+              className="pulse-ring absolute inset-0 rounded-full bg-brand-green-500"
+              style={{ animationDelay: "1.1s" }}
+            />
+          </>
+        )}
+
+        <button
+          type="button"
+          onClick={() => (open ? setOpen(false) : openChat())}
+          aria-label={open ? "Chiudi assistente virtuale" : "Apri assistente virtuale"}
+          className={`relative flex h-14 w-14 items-center justify-center rounded-full bg-brand-green-600 text-white shadow-xl shadow-brand-green-600/30 transition hover:scale-105 hover:bg-brand-green-700 ${
+            open ? "" : "animate-bounce-jump"
+          }`}
+        >
+          {open ? <XIcon className="h-6 w-6" /> : <MessageIcon className="h-6 w-6" />}
+        </button>
+
+        {!open && hasUnread && (
+          <span className="animate-badge-pop pointer-events-none absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+            1
+          </span>
+        )}
+      </div>
     </div>
   );
 }
