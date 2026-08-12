@@ -20,6 +20,16 @@ export default function LiveActivity() {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [chatbotOccupied, setChatbotOccupied] = useState(false);
+
+  useEffect(() => {
+    function handleChatbotState(event: Event) {
+      const detail = (event as CustomEvent<{ occupied: boolean }>).detail;
+      setChatbotOccupied(detail.occupied);
+    }
+    window.addEventListener("chatbot-widget-state", handleChatbotState);
+    return () => window.removeEventListener("chatbot-widget-state", handleChatbotState);
+  }, []);
 
   useEffect(() => {
     if (dismissed) return;
@@ -47,10 +57,10 @@ export default function LiveActivity() {
     };
   }, [index, dismissed]);
 
-  if (dismissed || !visible) return null;
+  if (dismissed || !visible || chatbotOccupied) return null;
 
   return (
-    <div className="animate-slide-in-left fixed bottom-5 left-5 z-40 flex max-w-[280px] items-start gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-xl">
+    <div className="animate-slide-in-left fixed bottom-24 inset-x-4 z-40 flex items-start gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-xl sm:bottom-5 sm:left-5 sm:inset-x-auto sm:max-w-[280px]">
       <span className="relative mt-1 flex h-2 w-2 shrink-0">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green-500 opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-green-500" />

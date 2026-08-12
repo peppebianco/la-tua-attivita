@@ -110,6 +110,23 @@ export default function Chatbot() {
   }, [messages, options, isTyping, open]);
 
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("chatbot-widget-state", { detail: { occupied: open || showTeaser } })
+    );
+  }, [open, showTeaser]);
+
+  useEffect(() => {
+    if (!open) return;
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    if (!isMobile) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [open]);
+
+  useEffect(() => {
     const teaserTimer = window.setTimeout(() => setShowTeaser(true), 4000);
 
     const greetTimer = window.setTimeout(() => {
@@ -150,10 +167,13 @@ export default function Chatbot() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed right-4 z-50 flex flex-col items-end gap-3 sm:right-5" style={{ bottom: "max(1.25rem, calc(env(safe-area-inset-bottom) + 0.75rem))" }}>
       {open && (
-        <div className="flex h-[520px] w-[92vw] max-w-sm flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl">
-          <div className="flex items-center justify-between bg-brand-navy-900 px-5 py-4">
+        <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-white sm:static sm:inset-auto sm:z-auto sm:h-[560px] sm:max-h-[75dvh] sm:w-[380px] sm:rounded-3xl sm:border sm:border-slate-100 sm:shadow-2xl">
+          <div
+            className="flex items-center justify-between bg-brand-navy-900 px-5 py-4"
+            style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
+          >
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-green-600 text-white">
                 <BoltIcon className="h-4 w-4" />
@@ -167,9 +187,9 @@ export default function Chatbot() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Chiudi chat"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-300 transition hover:bg-white/10 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-slate-300 transition hover:bg-white/10 hover:text-white"
             >
-              <XIcon className="h-4 w-4" />
+              <XIcon className="h-5 w-5" />
             </button>
           </div>
 
@@ -202,7 +222,10 @@ export default function Chatbot() {
             )}
           </div>
 
-          <div className="border-t border-slate-100 bg-white p-3">
+          <div
+            className="border-t border-slate-100 bg-white p-3"
+            style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+          >
             <p className="px-1 pb-2 text-[11px] text-slate-400">
               Risposte guidate a scopo dimostrativo, senza raccolta dati.
             </p>

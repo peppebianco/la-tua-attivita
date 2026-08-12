@@ -64,7 +64,7 @@ export default function Testimonials() {
           La fiducia dei nostri clienti
         </h2>
         <p className="mt-4 text-slate-400">
-          Passa il mouse sulle recensioni per mettere in pausa lo scorrimento.
+          Le recensioni scorrono in automatico — passa il mouse sopra per metterle in pausa.
         </p>
       </Reveal>
 

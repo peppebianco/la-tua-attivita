@@ -94,6 +94,14 @@ export default function Header() {
               </a>
             ))}
             <a
+              href="tel:+390000000000"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 text-sm font-semibold text-brand-navy-900"
+            >
+              <PhoneIcon className="h-4 w-4 text-brand-green-600" />
+              800 000 000
+            </a>
+            <a
               href="#contatti"
               onClick={() => setOpen(false)}
               className="mt-2 rounded-full bg-brand-green-600 px-5 py-2.5 text-center text-sm font-semibold text-white"
